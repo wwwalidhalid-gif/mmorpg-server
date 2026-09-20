@@ -20,15 +20,21 @@ io.on('connection', (socket) => {
   console.log('Pemain baru bersambung:', socket.id);
 
   socket.on('join_game', (playerData) => {
-    players[socket.id] = {
-      id: socket.id, 
-      charClass: playerData.charClass || 'Warrior',
-      x: playerData.x || 0,
-      y: playerData.y || 10,
-      z: playerData.z || 0,
-      rotation: playerData.rotation || 0,
-      anim: 'idle'
-    };
+      players[socket.id] = {
+        id: socket.id,
+        name: playerData.name || 'Unknown',     // <--- TAMBAH BARIS INI
+        level: playerData.level || 1,           // <--- TAMBAH BARIS INI
+        charClass: playerData.charClass || 'Warrior',
+        x: playerData.x || 0,
+        y: playerData.y || 10,
+        z: playerData.z || 0,
+        rotation: playerData.rotation || 0,
+        anim: 'idle'
+      };
+      
+      socket.emit('current_players', players);
+      socket.broadcast.emit('player_joined', players[socket.id]);
+    });
     
     socket.emit('current_players', players);
     socket.broadcast.emit('player_joined', players[socket.id]);
